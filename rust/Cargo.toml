@@ -1,0 +1,13 @@
+[package]
+name = "corium-miner"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rs_corium_digger"
+crate-type = ["cdylib"]
+
+[dependencies]
+hex = "0.4.3"
+pyo3 = "0.22.0"
+sha3 = "0.10.8"

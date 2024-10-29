@@ -1,0 +1,76 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "corium-miner"
+version = "1.0.0"
+description = "Corium Fuel-Containing Material (FCM) Miner"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "BSD-3-Clause"
+authors = [
+    { name = "Pamphile Roy" },
+]
+maintainers = [
+    { name = "Tupui" },
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+
+keywords = [
+    "stellar",
+    "stellar.org",
+    "blockchain",
+    "git",
+    "cryptocurrency",
+    "soroban",
+    "soroban-rpc"
+]
+
+dependencies = [
+    "stellar_sdk",
+    "soroban",
+    "stellar_sdk",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+
+dev = [
+    "corium-miner[test,backend]",
+    "pre-commit",
+    "ruff",
+]
+
+[project.scripts]
+mine-fcm = "corium_miner:main"
+
+[project.urls]
+homepage = "https://github.com/tupui/corium-miner"
+documentation = "https://github.com/tupui/corium-miner"
+source = "https://github.com/tupui/corium-miner"
+
+[tool.maturin]
+module-name = "corium_miner.rs_corium_digger"
+features = ["pyo3/extension-module"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F403", "F405"]
+"**/tests/**" = ["E402"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
