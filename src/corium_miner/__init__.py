@@ -22,19 +22,7 @@ miner_bytes = stellar_sdk.scval.to_address(miner).to_xdr_bytes()
 nonce_xdr_const = b'\x00\x00\x00\x05'
 
 
-def get_ledger_key_contract_code(contract_id: str) -> scval:
-    ledger_key = xdr.LedgerKey(
-        type=xdr.LedgerEntryType.CONTRACT_DATA,
-        contract_data=xdr.LedgerKeyContractData(
-            contract=stellar_sdk.Address(contract_id).to_xdr_sc_address(),
-            key=xdr.SCVal(xdr.SCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE),
-            durability=xdr.ContractDataDurability.PERSISTENT,
-        ),
-    )
-    return ledger_key
-
-
-def get_ledger_key_scval(contract_id: str, symbol_text: scval) -> scval:
+def _get_ledger_key_scval(contract_id: str, symbol_text: scval) -> scval:
     ledger_key = xdr.LedgerKey(
         type=xdr.LedgerEntryType.CONTRACT_DATA,
         contract_data=xdr.LedgerKeyContractData(
@@ -47,7 +35,7 @@ def get_ledger_key_scval(contract_id: str, symbol_text: scval) -> scval:
 
 
 def current_block() -> tuple[int, int, bytes]:
-    keys = get_ledger_key_contract_code(CONTRACT_ID)
+    keys = _get_ledger_key_scval(CONTRACT_ID, xdr.SCVal(xdr.SCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE))
 
     data = soroban_server.get_ledger_entries([keys])
     xdr_res = data.entries[0].xdr
@@ -72,7 +60,7 @@ def current_block() -> tuple[int, int, bytes]:
     ]
     args = soroban.Parameters(args=args)
     keys = args.args[0].value
-    keys = get_ledger_key_scval(CONTRACT_ID, keys)
+    keys = _get_ledger_key_scval(CONTRACT_ID, keys)
 
     data = soroban_server.get_ledger_entries([keys])
     xdr_res = data.entries[0].xdr
