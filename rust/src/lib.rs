@@ -32,7 +32,7 @@ fn dig(
     while !is_difficulty_correct(&result, &difficulty) {
         nonce += 1;
 
-        if nonce % 5000000 == 0 {
+        if nonce % 20000000 == 0 {
             return (false, result, nonce);
         }
 

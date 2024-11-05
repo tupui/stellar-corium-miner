@@ -73,7 +73,7 @@ def current_block() -> tuple[int, int, bytes]:
 
 def finding_block(
     idx: int, message: str, prev_hash: bytes, difficulty: int, nonce: int
-) -> tuple[bytes | None, int]:
+) -> tuple[bool, bytes | None, int]:
 
     idx_message_prev_hash_nonce_xdr_const_ = (
         stellar_sdk.scval.to_uint64(idx).to_xdr_bytes()
@@ -84,9 +84,9 @@ def finding_block(
 
     success, block_hash, nonce = rs_corium_digger.dig(idx_message_prev_hash_nonce_xdr_const_, miner_bytes, nonce, difficulty)
 
-    block_hash = bytes(bytearray(block_hash)) if success else None
+    block_hash = bytes(bytearray(block_hash))
 
-    return block_hash, nonce
+    return success, block_hash, nonce
 
 
 def mine(message: str):
@@ -101,14 +101,14 @@ def mine(message: str):
 
         itime = time.monotonic()
 
-        block_hash, nonce = finding_block(
+        success, block_hash, nonce = finding_block(
             idx=idx+1,
             message=message,
             prev_hash=prev_hash,
             difficulty=difficulty,
             nonce=nonce,
         )
-        if block_hash is not None:
+        if success:
             break
         else:
             old_idx = idx
