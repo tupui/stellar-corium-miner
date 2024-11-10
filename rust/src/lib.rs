@@ -32,10 +32,6 @@ fn dig(
     while !is_difficulty_correct(&result, &difficulty) {
         nonce += 1;
 
-        if nonce % 20000000 == 0 {
-            return (false, result, nonce);
-        }
-
         let nonce_: [u8; 8] = nonce.to_be_bytes();
 
         let data_hash = [idx_message_prev_hash_nonce_xdr_const_, &nonce_, miner_].concat();

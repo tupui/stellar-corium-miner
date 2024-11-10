@@ -9,7 +9,7 @@ import soroban
 import corium_miner
 
 
-N_WORKERS = 4
+N_WORKERS = 5
 CONTRACT_ID = "CC5TSJ3E26YUYGYQKOBNJQLPX4XMUHUY7Q26JX53CJ2YUIZB5HVXXRV6"
 
 
@@ -52,8 +52,9 @@ def main():
             process = mp.Process(target=worker, args=(task_queue, done_queue))
             process.start()
             processes.append(process)
+        return processes
 
-    fire_processes(idx, prev_hash, difficulty)
+    processes = fire_processes(idx, prev_hash, difficulty)
 
     while "And we diggy diggy hole...":
         itime = time.monotonic()
@@ -62,29 +63,22 @@ def main():
             if curr_hash != prev_hash:
                 task_queue.empty()
                 done_queue.empty()
-                fire_processes(idx, curr_hash, difficulty)
+                for process in processes:
+                    process.terminate()
+                processes = fire_processes(idx, curr_hash, difficulty)
 
             prev_hash = curr_hash
 
             try:
-                message, [success, block_hash, nonce] = done_queue.get(timeout=1)
+                message, [success, block_hash, nonce] = done_queue.get(timeout=3)
                 iter_time = time.monotonic() - itime
-                print(f"Digging block: {idx+1} | difficulty: {difficulty} | {20 / iter_time} Mega Hash/s | nonce: {nonce}")
+                print(f"Digging block: {idx+1} | difficulty: {difficulty} | {(nonce / 1e6) / iter_time} Mega Hash/s | nonce: {nonce}")
                 itime = time.monotonic()
                 if success:
                     break
             except Empty:
+                print(f"Digging block: {idx+1} | difficulty: {difficulty}")
                 continue
-
-            task_queue.put(
-                dict(
-                    idx=idx+1,
-                    message=next(messages),
-                    prev_hash=prev_hash,
-                    difficulty=difficulty,
-                    nonce=nonce,
-                )
-            )
 
         args = [
             {"name": "hash", "type": "bytes", "value": block_hash},
