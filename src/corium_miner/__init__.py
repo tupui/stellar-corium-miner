@@ -92,12 +92,12 @@ def finding_block(
 def mine(message: str):
     idx, difficulty, prev_hash = current_block()
     itime = time.monotonic()
-    nonce = random.randint(0, 2**31)
+    nonce = 0
     while "Going deeper...":
 
         iter_time = time.monotonic() - itime
 
-        print(f"Digging block: {idx+1} | difficulty: {difficulty} | {1 / (iter_time / 5)} Mega Hash/s | nonce: {nonce}")  # | last hash - {binascii.b2a_hex(prev_hash)}")
+        print(f"Digging block: {idx+1} | difficulty: {difficulty} | {nonce / (iter_time * 1e6)} Mega Hash/s | nonce: {nonce}")  # | last hash - {binascii.b2a_hex(prev_hash)}")
 
         itime = time.monotonic()
 
@@ -136,17 +136,27 @@ def mine(message: str):
     else:
         print(f"\n\nWe found a block! {idx+1} : {nonce} : {binascii.b2a_hex(block_hash)}\n\n")
 
+    return idx
+
 
 # Let's go!
 
 def main():
+    mined_idx = -1
+
     while "And we diggy diggy hole...":
+        idx, *_ = current_block()
+        if mined_idx == idx:
+            time.sleep(1)
+            mined_idx = idx
+            continue
+
         restart_nonce = random.randint(0, 100)
         message = f"TANSU{restart_nonce}"
 
         print(f"\n\nAnd we diggy diggy hole... {message}\n\n")
 
-        mine(message=message)
+        mined_idx = mine(message=message)
 
 
 if __name__ == "__main__":

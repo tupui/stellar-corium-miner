@@ -41,7 +41,6 @@ keywords = [
 dependencies = [
     "stellar_sdk",
     "soroban",
-    "stellar_sdk",
 ]
 
 [project.optional-dependencies]
