@@ -93,27 +93,21 @@ def mine(message: str):
     idx, difficulty, prev_hash = current_block()
     itime = time.monotonic()
     nonce = 0
-    while "Going deeper...":
 
-        iter_time = time.monotonic() - itime
+    success, block_hash, nonce = finding_block(
+        idx=idx+1,
+        message=message,
+        prev_hash=prev_hash,
+        difficulty=difficulty,
+        nonce=nonce,
+    )
 
-        print(f"Digging block: {idx+1} | difficulty: {difficulty} | {nonce / (iter_time * 1e6)} Mega Hash/s | nonce: {nonce}")  # | last hash - {binascii.b2a_hex(prev_hash)}")
+    iter_time = time.monotonic() - itime
 
-        itime = time.monotonic()
+    print(f"Digging block: {idx+1} | difficulty: {difficulty} | {nonce / (iter_time * 1e6)} Mega Hash/s | nonce: {nonce}")  # | last hash - {binascii.b2a_hex(prev_hash)}")
 
-        success, block_hash, nonce = finding_block(
-            idx=idx+1,
-            message=message,
-            prev_hash=prev_hash,
-            difficulty=difficulty,
-            nonce=nonce,
-        )
-        if success:
-            break
-        else:
-            old_idx = idx
-            idx, difficulty, prev_hash = current_block()
-            nonce = nonce if old_idx == idx else random.randint(0, 2**31)
+    if not success:
+        return -1
 
     args = [
         {"name": "hash", "type": "bytes", "value": block_hash},
