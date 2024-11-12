@@ -127,6 +127,7 @@ def mine(message: str):
         )
     except Exception as exc:
         print(f"\n\nDamn it, the shaft collapsed!\n\n{exc}\n\n")
+        return -1
     else:
         print(f"\n\nWe found a block! {idx+1} : {nonce} : {binascii.b2a_hex(block_hash)}\n\n")
 
